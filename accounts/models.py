@@ -1,9 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, AbstractUser
+from django.contrib.auth.models import AbstractUser
 
 
 class Custom_user(AbstractUser):
-    pass
+
+    email = models.EmailField(blank=False, unique=True)
 
 
 
