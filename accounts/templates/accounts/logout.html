@@ -1,0 +1,16 @@
+{% extends 'accounts/base.html' %}
+
+
+{% block content %}
+
+    <form action="" method="POST">
+
+        {% csrf_token %}
+        <button type="submit" >logout </button>
+        <a href="{% url 'accounts:login' %}" type="button" >cancel </a>
+
+    </form>
+    
+
+
+{% endblock content %}

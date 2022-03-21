@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .forms import Custom_userCreationForm
-from django.contrib.auth import login
+from .forms import Custom_userCreationForm, Profile_form
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 
 
@@ -28,3 +28,25 @@ def login_user(request):
     form = AuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})
    
+
+def logout_user(request):
+    if request.method == "POST":
+        #if request.user != "AnonymousUser":
+           # print("logined")
+        logout(request)
+        return HttpResponse("logout is successfully")
+    
+    return render(request, 'accounts/logout.html')
+
+    
+def profile_user(request):
+    if request.method == "POST":
+        form = Profile_form(request.POST)
+        if form.is_valid():
+            instance = form.save(commit = False)
+            instance.user = request.user
+            instance.save()
+            return HttpResponse("info is successfully saved")
+
+    form = Profile_form()
+    return render(request, 'accounts/profile.html', {'form': form}) 
