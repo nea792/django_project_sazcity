@@ -9,6 +9,7 @@ class Custom_user(AbstractUser):
     email = models.EmailField(blank = False, unique = True)
 
 
+
 class User_info(models.Model):
     user = models.OneToOneField(Custom_user, on_delete = models.CASCADE)
     first_name = models.CharField(max_length = 30)

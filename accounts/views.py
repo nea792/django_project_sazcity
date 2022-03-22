@@ -1,8 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .forms import Custom_userCreationForm, Profile_form
+from .forms import Custom_userCreationForm, Profile_form, Update_account
 from django.contrib.auth import login, logout
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from .models import User_info
+from django.contrib import messages
 
 
 def register_user(request):
@@ -41,12 +44,33 @@ def logout_user(request):
     
 def profile_user(request):
     if request.method == "POST":
-        form = Profile_form(request.POST)
+        form = Profile_form(request.POST, instance=request.user.user_info)
         if form.is_valid():
-            instance = form.save(commit = False)
-            instance.user = request.user
-            instance.save()
+            form.save()
             return HttpResponse("info is successfully saved")
-
-    form = Profile_form()
+    form = Profile_form(instance=request.user.user_info)
     return render(request, 'accounts/profile.html', {'form': form}) 
+
+
+def edit_account(request):
+    if request.method == "POST":
+        user_form=Update_account(request.POST, instance=request.user)
+        password_form=PasswordChangeForm(request.user, request.POST)
+        if user_form.is_valid():
+            user=user_form.save()
+            messages.success(request, 'Your info was successfully updated!')
+
+        if password_form.is_valid():
+            password_form.save()
+            update_session_auth_hash(request, user) 
+            messages.success(request, 'Your password was successfully updated!')
+            
+    user_form=Update_account(instance=request.user)
+    password_form=PasswordChangeForm(request.user)
+    context={
+        'u_form':user_form,
+        'p_form':password_form
+    }
+    return render(request, 'accounts/edit_account.html', context)
+
+
