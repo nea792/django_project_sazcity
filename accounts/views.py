@@ -4,7 +4,6 @@ from .forms import Custom_userCreationForm, Profile_form, Update_account
 from django.contrib.auth import login, logout
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
-from .models import User_info
 from django.contrib import messages
 
 
