@@ -51,11 +51,20 @@ class Discount_item(models.Model):
     def __str__(self):
         return f'{self.discount} for {self.product}'
 
-
+'''
 
 class Attributes(models.Model):
     att_name=models.CharField(max_length=25)
 
     def __str__(self):
         return f'{self.att_name}'
-'''
+
+
+class Attributes_value(models.Model):
+    product=models.ForeignKey(Product, on_delete=models.CASCADE)
+    att=models.ForeignKey(Attributes, on_delete=models.CASCADE)
+    value=models.CharField(max_length=25)
+
+    def __str__(self):
+        return f'{self.att} for {self.product}'
+        
