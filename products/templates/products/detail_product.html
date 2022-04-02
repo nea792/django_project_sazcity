@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <div class="card" style="width: 18rem;">
+      <img class="card-img-top" src="{{product.pic.url}}" alt="Card image cap">
+      <div class="card-body">
+        <h5 class="card-title">{{product.product_name}}</h5>
+        {% if product.discount %}
+            <h3 class="card-title text-decoration-line-through">{{product.price}}ریال</h3>
+            <h3 class="card-title">{{product.get_discount}}ریال</h3>  
+        {% else %}
+            <h3 class="card-title">{{product.price}}ریال</h3> 
+        {% endif %}
+        <p class="card-text">{{product.product_description}}</p>
+        <p class="card-text">{{product.existance}}</p>
+        <p class="card-text">تعداد : {{product.total_number}}</p>
+      </div>
+  </div>
+
+    <form action="" method="POST">
+      
+      {% csrf_token %}
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star"></span>
+      <span class="fa fa-star"></span>
+      {{create_comment}}
+      <button type="submit">send!</button>
+
+    </form>
+
+  {% for comment in comments %}
+
+        <div style="width: 18rem;border:1px solid gray;">
+            <p>{{comment.title}}</p>
+            <p>{{comment.content}}</p>
+            <p>{{comment.date}}</p>
+            <p>{{comment.rate}}</p>
+            {% if comment.unknown_user %}
+              <p>کاریر ناشناس</p>
+            {% else %}
+            <p>{{comment.user.username}}</p>
+            {% endif %}
+        </div>
+
+  {% endfor %}
+
+{% endblock content %}
