@@ -2,7 +2,7 @@ from .models import Comment
 from django.forms import ModelForm
 
 
-class Create_comment(ModelForm):
+class Comment_Form(ModelForm):
 
     class Meta:
         model = Comment

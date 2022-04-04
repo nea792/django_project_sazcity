@@ -19,7 +19,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits = 9, decimal_places = 0)
     pic = models.ImageField(upload_to = 'product_pics')
     total_number = models.IntegerField() 
-    liked = models.ManyToManyField(Custom_user, blank=True )
+    #liked = models.ManyToManyField(Custom_user, blank=True )
    
     def __str__(self):
         return self.product_name
@@ -71,6 +71,14 @@ class Attributes_value(models.Model):
     def __str__(self):
         return f'{self.att} for {self.product}'
         
+
+class Liked_product(models.Model):
+    product = models.ForeignKey(Product, on_delete = models.CASCADE)
+    user = models.ForeignKey(Custom_user, on_delete = models.CASCADE)
+    added_date =  models.DateTimeField(auto_now_add = True)
+
+    
+
 
 
 
