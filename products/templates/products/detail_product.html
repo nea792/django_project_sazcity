@@ -1,59 +1,225 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block extrahead %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'products/css/style.css' %}">
+
+{% endblock %}
+
+{% block banner %}{% endblock banner%}
 
 {% block content %}
 
-  <div class="card" style="width: 18rem;">
-      <img class="card-img-top" src="{{product.pic.url}}" alt="Card image cap">
-      <div class="card-body">
-        <h5 class="card-title">{{product.product_name}}</h5>
-        {% if product.discount %}
-            <h3 class="card-title text-decoration-line-through">{{product.price}}ریال</h3>
-            <h3 class="card-title">{{product.get_discount}}ریال</h3>  
-        {% else %}
-            <h3 class="card-title">{{product.price}}ریال</h3> 
-        {% endif %}
-        <p class="card-text">{{product.product_description}}</p>
-        <p class="card-text">{{product.existance}}</p>
-        <p class="card-text">تعداد : {{product.total_number}}</p>
-      </div>
+  <div class="messages">
+      {% if messages %}
+      <ul>
+          {% for message in messages %}
+          <li>
+              <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+          </li>
+          {% endfor %}
+      </ul>
+    {% endif %}
   </div>
-   
-  <form action="{% url 'products:add-likes' product.id %}" method="POST">
-    {% csrf_token %}
-    <button type="submit">ADD TO FAV</button>
-  </form>
-
   
-  <form action="{% url 'products:send-comment' product.id %}" method="POST">
-      
-      {% csrf_token %}
-      <div class="rating">
-        <input type="radio" id="star1" name="rate" value="1" />
-        <input type="radio" id="star2" name="rate" value="2" />
-        <input type="radio" id="star3" name="rate" value="3" />
-        <input type="radio" id="star4" name="rate" value="4" />
-        <input type="radio" id="star5" name="rate" value="5" />
-      </div>
-      {{create_comment}}
-      <button type="submit">send!</button>
+  <div class="procuct_cover">
 
-  </form>
+      <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+          <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'products:show-products' product.category_item.inner_category_name %}"> {{product.category_item}}</a></li>
+          <li class="breadcrumb-item">{{product.product_name}}</li>  
+        </ul>
+      </nav>
 
-  <div>{{comments.count}}</div>
-  {% for comment in comments %}
+      <div class="row">
 
-        <div style="width: 18rem;border:1px solid gray;">
-            <p>{{comment.title}}</p>
-            <p>{{comment.content}}</p>
-            <p>{{comment.date}}</p>
-            <p>{{comment.rate}}</p>
-            {% if comment.unknown_user %}
-              <p>کاریر ناشناس</p>
-            {% else %}
-            <p>{{comment.user.username}}</p>
-            {% endif %}
+        <div class="col-12 col-md-12 col-lg-7">   
+          <img class="product_pic" src="{{product.pic.url}}">
         </div>
 
-  {% endfor %}
+        <div class="sell_table col-12 col-md-12 col-lg-5">
 
+            <h3>{{product.product_name}}</h3>
+            <ul class="info" type="none">
+
+                <li><span class="fa fa-check text-danger"></span> ضمانت اصالت کالا</li>
+                <hr>
+                <li><span class="fa fa-star text-danger" ></span> {{product.avg_rate}} امتیاز از دید کاربران</li> 
+                <hr>
+                {% if product.discount %}
+                  <li class="line-through"><span class="fa fa-money text-danger"></span>  {{product.price|intcomma}} ریال </li>
+                  <li class=" text-danger"><span class="fa fa-money"></span>  {{product.get_discount|intcomma}} ریال</li>  
+                {% else %}
+                  <li><span class="fa fa-money text-danger"></span>  {{product.price|intcomma}} ریال</li> 
+                {% endif %}
+                <hr>
+                {% if product.total_number == 0 %}
+                  <li> {{product.existance}}</li>
+                {% else %}
+                    <li> {{product.total_number}}  عدد در انبار  </li>
+                {% endif %}
+         
+            </ul> 
+
+            <div class="choice_color">
+                  <div id="colors">
+                    {% for color in colors %}
+                          {{color.color}} <input type="radio" name="color" value="{{color.id}}" />
+                    {% endfor %}
+                  </div>
+                <div style="display:flex;align-items:center;justify-content:center;"><button data-product="{{product.id}}" data-action="addOrder"  class="btn btn-sm update-cart btn-danger">افزون به سبد خرید</button> </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:center;">
+              <form action="{% url 'products:add-likes' product.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn text-danger border-danger btn-sm" ><span class="fa fa-thumbs-up"></span> افزودن به علاقمندی</button>
+              </form>
+            </div>
+
+        </div>
+
+      </div>
+
+  </div>
+
+  <div class="procuct_cover">
+
+    <div class="details">
+
+        <ul class="row" type="none">
+          <li class="col"><a href="#explain">توضیحات</a></li>
+          <li class="col"><a href="#characteristics">مشخصات</a></li>
+          <li class="col"><a href="#comments">نظرات</a></li>
+        </ul>
+
+        {% autoescape off %}
+            <div class="item" id="explain"> {{product.product_description|linebreaks }}</div>
+        {% endautoescape %}
+
+        <div class="item" id="characteristics">
+          <table class="table  table-striped">
+            <tbody>
+            {% if attributes %}  
+              {% for attribute in attributes %}
+                <tr>
+                  <td>{{attribute.att}}</td>
+                  <td>{{attribute.value}}</td>
+                </tr>
+              {% endfor %}
+            {% endif %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="item"><h4>دیدگاه خود را بنویسید</h4></div>
+        <div class="item" id="comments">
+
+          <form action="{% url 'products:send-comment' product.id %}" method="POST">
+            {% csrf_token %}
+
+            <div class="rating">
+              <fieldset class="rating">
+                <h5>امتیاز دهید : </h5>
+                <input type="radio" id="star5" name="rating" value="5" /><label for="star5" >5 stars</label>
+                <input type="radio" id="star4" name="rating" value="4" /><label for="star4" >4 stars</label>
+                <input type="radio" id="star3" name="rating" value="3" /><label for="star3" >3 stars</label>
+                <input type="radio" id="star2" name="rating" value="2" /><label for="star2" >2 stars</label>
+                <input type="radio" id="star1" name="rating" value="1" /><label for="star1" >1 star</label>
+            </fieldset>
+            </div>
+
+              {% for field in create_comment %}
+                <div>
+                  {{field.errors}}
+                  {{field.label}}
+                  {{field}}
+                </div>  
+              {% endfor %}
+            <button type="submit" class="btn btn-danger">ارسال نظر</button>
+      
+          </form>
+
+
+          <div style="clear:both"><h5> {{comments.count}} دیدگاه</h5></div> 
+            {% for comment in comments %}
+              <div class="commnt">
+                
+                  {% if comment.unknown_user %}
+                    <p style="float:right;"> کاربر ناشناس </p>
+                  {% else %}
+                    <p style="float:right;color: brown;">{{comment.user.username}}</p>
+                  {% endif %}
+                  
+                  <p style="float:right;margin-right:11px;font-size: smaller;" data-rate="{{comment.rate}}" class="show_rate">
+                    <span class="fa fa-star"></span>
+                    <span class="fa fa-star"></span>
+                    <span class="fa fa-star"></span>
+                    <span class="fa fa-star"></span>
+                    <span class="fa fa-star"></span>
+                  </p>
+    
+                  <p style="float: left;font-size: smaller;">{{comment.date.day}}/{{comment.date.month}}/{{comment.date.year}}</p>
+                  <p style="clear: both">{{comment.content}}</p>
+
+
+                  <button class="reply_btn btn btn-sm btn-primary m-1">پاسخ</button>
+                  <div class="reply_form">
+                    <form method="POST" action="{% url 'products:send-reply' product.id %}">
+                      {% csrf_token %}
+                      {{reply_form}}
+                        <button type="submit" class="btn btn-danger btn-sm" name="parent_id" value="{{comment.id}}">ارسال</button>
+                    </form>
+                  </div>
+                  <br><br>
+                  {% if comment.replies.all %}
+                    <button class="toggle_reply btn-sm btn"><i class="fa fa-angle-down" aria-hidden="true"></i></button>
+                    <div class="reply">
+                      <div style="clear:both;margin-bottom:20px;"><h6> {{comment.replies.count}} پاسخ</h6></div>
+                      {% for replay in comment.replies.all %}
+                          <hr>
+                          <p class="info" style="color: brown;">{{ replay.user.username }} | {{replay.date.day}}/{{replay.date.month}}/{{replay.date.year}}</p>
+                          <p>{{ replay.content }}</p>
+                          <button class="reply_btn btn btn-sm btn-secondary">پاسخ</button>
+                          <div class="reply_form">
+                            <form method="POST" action="{% url 'products:send-reply' product.id %}">
+                              {% csrf_token %}
+                              {{reply_form}}
+                                <button type="submit" class="btn btn-danger btn-sm" name="parent_id" value="{{replay.id}}">ارسال</button>
+                            </form>
+                          </div>
+
+                          <br><br>
+
+                          {% if replay.replies.all %}
+                            <div class="innerReply">
+                              {% for inner_reply in replay.replies.all %}
+                                  <p class="info" style="color: brown;">{{ inner_reply.user.username }} | {{inner_reply.date.day}}/{{inner_reply.date.month}}/{{inner_reply.date.year}}</p>
+                                  <p>{{ inner_reply.content }}</p>
+                                  <hr>
+                              {% endfor %}
+                            </div>
+                          {% endif %}
+
+
+                      {% endfor %}
+                    </div>
+                    <br>
+                  {% endif %}
+
+              </div>     
+          {% endfor %}
+
+        </div>
+    
+    </div>
+
+  </div>
+  
 {% endblock content %}
+{% block script %}
+ 
+  <script src="{% static 'products/js/jq.js' %}"></script>
+{% endblock %}

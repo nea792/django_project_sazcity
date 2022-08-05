@@ -1,34 +1,65 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block extrahead %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'products/css/style.css' %}">
+
+{% endblock %}
+
+
+{% block banner %}{% endblock banner%}
 
 {% block content %}
+    {% if filter %}
+    <div class="filter">
+      <form  method="GET">
+        <label>فیلتر بر اساس :</label>
+        <select name='filter' onchange='if(this.value != 0) { this.form.submit(); }'>
+            <option value='0'>{{filter}}</option>
+            <option value='1'>جدید</option>
+            <option value='2'>محبوب</option>
+            <option value='3'>پر فروش</option>
+        </select>
+      </form>
+    </div>
+    {% endif %}
+      
+    {% if products %}
 
-    <form  method="GET">
-      <select name='filter' onchange='if(this.value != 0) { this.form.submit(); }'>
-          <option value='0'>فیلتر</option>
-          <option value='1'>جدید</option>
-          <option value='2'>محبوب</option>
-          <option value='3'>پر فروش</option>
-      </select>
-    </form>
-    
-    {% for product in products %}
+      <div class="row wrapper">
+        {% for product in products %}
+         <div class="col-12 col-sm-6 col-md-6 col-lg-3 card">
+          <a href="{% url 'products:detail-product' product.id %}">
+            <img class="card-img-top" src="{{product.pic.url}}" alt="Card image cap">
 
-    <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="{{product.pic.url}}" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">{{product.product_name}}</h5>
-          {% if product.discount %}
-              <h3 class="card-title text-decoration-line-through">{{product.price}}ریال</h3>
-              <h3 class="card-title">{{product.get_discount}}ریال</h3>  
-          {% else %}
-              <h3 class="card-title">{{product.price}}ریال</h3> 
-          {% endif %}
-          <p class="card-text">{{product.product_description}}</p>
-          <p class="card-text">{{product.existance}}</p>
-          <a href="#" class="btn btn-primary">Go to product</a>
-        </div>
+            <div class="card-body">
+
+              <h5 class="card-title">{{product.category_item}} : {{product.product_name}}</h5>
+              <h5 class="card-rate">{{product.avg_rate}} <span class="fa fa-star" style=" color: orange;"></span></h5> 
+              
+              {% if product.total_number == 0 %}
+                  <h6 class="card-text text-danger">{{product.existance}}</h6>
+              {% else %}
+                  <h6 class="card-text text-danger">{{product.total_number}}  عدد در انبار  </h6>
+              {% endif %}
+
+              {% if product.discount %}
+                  <h6 class="card-price"><sup class=" text-danger font-weight-bold"> %{{product.discount.percent}} </sup><span class="line-through">{{product.price|intcomma}} ریال</span></h6>
+                  <h6 class="card-price text-success">{{product.get_discount|intcomma}} ریال</h6>  
+              {% else %}
+                  <h6 class="card-price">{{product.price|intcomma}} ریال</h6> 
+              {% endif %}
+           
+            </div>
+             </a>
+          </div>
+        
+        {% endfor %}
       </div>
-
-    {% endfor %}
+      
+    {% endif %}
 
 {% endblock content %}
+

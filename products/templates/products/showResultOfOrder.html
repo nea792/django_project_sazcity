@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block headers %}
+{% endblock headers %}
+
+{% block navbar %}
+{% endblock navbar %}
+
+{% block content %}
+
+<div style="display:flex;justify-content:center;margin-top:4%">
+    <div style="background-color:#4BB543;width:60%;color:rgb(255, 255, 255) ;padding:2%;">
+        <h2 style="text-align: center;">سفارش شما با موفقیت ثبت شد</h2>
+        <p style="text-align: center;">شماره سفارش شما برای پیگیری : {{order.id}} </p>
+    </div>
+</div>
+
+<div class="button_wrapper"> <a class="btn btn-success" type="submit" href="{% url 'main-page'%}">بازگشت به صفحه اصلی</a></div> 
+
+{% endblock content %}
+
+{% block footer %}
+{% endblock footer %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+
+
+{% block extrahead %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'products/css/style.css' %}">
+
+{% endblock %}
+
+
+{% block headers %}
+{% endblock headers %}
+
+
+{% block content %}
+
+    <div class="messages" >
+        {% if messages %}
+        <ul >
+            {% for message in messages %}
+            <li>
+                <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+            </li>
+            {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+
+    <div class="user-likes">
+      <table class="table" >
+        <thead>
+          <tr>
+            <th scope="col">تصویر</th>
+            <th scope="col">نام</th>
+            <th scope="col">قیمت</th>
+            <th scope="col">ویرایش</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in likes %}
+            <tr>
+              <td class="align-middle"> 
+                  <a style="display:block" href="{% url 'products:detail-product' item.product.id %}">
+                      <img height="60" width="60" src="{{item.product.pic.url}}" alt="">
+                  </a>
+              </td>
+              <td class="align-middle">{{item.product.product_name}}</td>
+              <td class="align-middle">{{item.product.price|intcomma}} ریال</td>
+              <td class="align-middle row">
+                  
+                  <form class="col-2" action="{% url 'products:delete_liked' item.id %}" method="POST">
+                      {% csrf_token %}
+                      <button class="btn text-danger" type="submit" ><span class="fa fa-trash" aria-hidden="true"></span></button>
+                  </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+   </div>
+{% endblock content %}

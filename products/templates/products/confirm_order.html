@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block extrahead %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'products/css/style.css' %}">
+
+{% endblock extrahead %}
+
+{% block headers %}
+{% endblock headers %}
+
+{% block content %}
+    <div class="messages">
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>
+                <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    </div>
+    <div style="width:100%" class="row">
+        
+        <div class=" profile_wrapper col-12 col-md-12 col-lg">
+            <hr>
+            <p>مشخصات زیر را جهت ارسال تکمیل کنید.</p>
+            <hr>
+            <form action="{% url 'products:confirm-order' %}" method="POST">
+                {% csrf_token %}
+                {% for field in profile_form %}
+                    <div class="label">  {{field.errors}}</div>
+                    <div class="form_field row">
+                        <div class="label col-12 col-lg-5">  {{field.label}} :</div>
+                        <div class="form_content col-12 col-lg-5">  {{field}}</div>
+                    </div>
+                {% endfor %}
+                <br>
+                    <div class="button_wrapper"> <button class="btn btn-danger" type="submit" > ثبت سفارش</button></div> 
+            </form>
+        </div>
+
+        <div class="col-12 col-md-12 col-lg ">
+            <div class="factor_wrapper align-middle">
+                <h3 style="color: brown;"> فاکتور سفارش </h3>
+                <hr>
+
+                <div>
+                    <span>وضعیت سفارش  :</span> {{order.state}}
+                </div>
+
+                <div>
+                    <span>تعداد کل :</span> {{order.get_total_quantity}}
+                </div>
+
+                <div>
+                    <span> حمل و نقل  :</span> {{order.delivery.type}}
+                </div>
+                <hr>
+                <div>
+                    <span>هزینه محصولات  :</span> {{order.total_product_price|intcomma}} ریال 
+                </div>
+
+                <div>
+                    <span>هزینه ارسال  :</span> {{order.get_delivery_price|intcomma}} ریال 
+                </div>
+
+                <div>
+                        <span>هزینه کل :</span>{{order.total_price|intcomma}} ریال 
+                </div>   
+            </div>
+        </div> 
+    </div>
+{% endblock content %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block headers %}
+{% endblock headers %}
+
+
+{% block content %}
+
+    <div class="messages" >
+        {% if messages %}
+        <ul >
+            {% for message in messages %}
+            <li>
+                <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    </div>
+
+    <div class="row" >
+        <div class="col-2 col-md-2"></div>
+        <div class="col-8 col-md-8 shadow-lg p-3 mb-5 bg-white rounded" id="call_us">
+            <h5> نظرات خود را با ما در میان بگذارید</h5>
+            <hr>
+            <form action="" method="POST">
+                {% csrf_token %}
+            
+                <div>
+                    {{call_form.subject}}
+                </div>
+
+                <div>
+                    {{call_form.message}}
+                </div>
+                <div class="button_wrapper">
+                    <button type="submit" class="btn btn-danger">ارسال پیام</button>
+                </div>
+                
+            </form> 
+        </div>
+        
+        <div class="col-2 col-md-2"></div>
+    </div>
+
+{% endblock content %}

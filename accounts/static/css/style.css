@@ -1,0 +1,240 @@
+@font-face {
+    font-family: 'Parastoo';
+    src: url('../fonts/Parastoo.eot'),
+     url('../fonts/Parastoo.woff') format('woff'),
+     url('../fonts/Parastoo.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+body{
+    font-family: "Parastoo";
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    direction: rtl;
+    box-sizing: border-box;
+    text-align:right;
+}
+body
+{
+    background-color: #fff;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    left: 0;
+    overflow-x: hidden;
+}
+
+html{
+    width: 100% ;
+    height: 100%; 
+  
+}
+
+.parent_banner{
+    margin: 1%;
+    height:0;
+    background-color: #fff;
+    visibility: hidden;
+}
+.parent_banner div{
+   display: flex;
+   justify-content: center;
+}
+.parent_banner div img{
+    width:100px;
+    height:100px;
+    margin:10px;
+ }
+.navbar{
+    width: 100% !important;
+    background: linear-gradient(to right,rgba(235, 39, 13, 0.6) , rgba(224, 34, 9, 0.87) );
+}
+
+.nav-link{
+    font-size:large;
+    font-weight: bold;
+    color:#fff !important;   
+}
+.navbar .nav-item{
+    margin-right:10px;
+    padding:1px;
+}
+
+.dropdown-item{
+    cursor: pointer !important;
+}
+
+.nav-link:hover{
+    background-color: #fff;
+    color: red !important;
+}
+
+.dropdown-menu a:hover{
+    border-bottom:1px outset red; 
+}
+
+.search_bar{
+    margin-right:25px;
+    display: flex;
+    justify-content: center;
+}
+
+.reset_form input{
+    width:80%;
+    background-color: rgb(230, 234, 234);
+    padding:3px;
+    margin:1%;
+    border: #fff;
+    box-shadow: 5px 10px 13px rgb(211, 205, 205);
+    outline: none !important;
+
+}
+.reset_form label{
+    font-weight: bold;
+    font-size: smaller;
+    margin:1%;
+}
+
+#carouselIndicators {
+    width:100%;
+    height: 300px;
+}
+#carouselIndicators img{
+    width:100%;
+    height: 300px;
+}
+.items img {
+    width:230px ;
+    height:230px;
+    display:block;
+    margin:auto;
+}
+.content{
+    min-height: 80vh;
+    width:100% !important;
+}
+
+footer{
+    background-color:rgba(224, 34, 9, 0.87);
+    font-size:12px;
+    width: 100% !important;
+    position: absolute;
+    left:0;
+}
+
+footer img{
+    border-radius: 50%;
+    float: left;
+    width:50px;
+    height: 50px;  
+}
+
+#register_Modal input,#login_Modal input{
+    width:100%;
+    padding:5px;
+}
+
+.profile_wrapper{
+    margin:3%;
+    width: 100%;
+    font-size: 13px;
+   
+}
+
+.profile_wrapper .form_field{
+    margin:10px;
+}
+
+.profile_wrapper .form_field div {
+    margin: 3px;
+}
+.profile_wrapper .form_field .form_content input{
+    width: 100% !important;
+    padding:1%;
+}
+.profile_wrapper h5{
+    font-weight: bold;
+}
+.button_wrapper{
+    padding:1%;
+    text-align: center;
+}
+
+.button_wrapper button{
+    padding:1%;
+}
+
+#call_us{
+    padding:2%;
+    margin: 2%;
+    text-align: center;
+
+}
+#call_us div{
+    margin: 20px;
+}
+
+#call_us div input,textarea{
+    padding:1%;
+    width:100%;
+}
+.messages{
+    z-index:10;
+    font-size:13px;
+    width: 100%;  
+ }
+
+ .messages .alert {
+    position: fixed;
+    top: 0;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0px);
+    transition: visibility 0s, opacity 250ms, transform 250ms;
+}
+.messages .alert.hide {
+    position: fixed;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-10px);
+    transition: visibility 0s 250ms, opacity 250ms, transform 250ms;
+}
+
+@media (min-width: 768px) {
+    footer{
+      
+        font-size:16px;
+    }
+    
+    footer img{
+        width:80px;
+        height: 80px;  
+    }
+    
+    .profile_wrapper{
+        font-size: 15px;
+    }
+
+    .messages{
+        font-size:18px;
+     }
+     .reset_form label{
+         font-size: medium;
+     }
+     .parent_banner{
+        visibility: visible;
+        height: 120px;
+    }
+
+  }
+  @media (min-width: 992px) {
+    footer{
+      
+        font-size:18px;
+    }
+    
+  }

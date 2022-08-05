@@ -18,8 +18,15 @@ class User_info(models.Model):
     address_2 = models.CharField(max_length = 128, blank = True)
     state = models.CharField(max_length = 64)
     city = models.CharField(max_length = 64)
-    post_code = models.CharField(max_length = 10) #handle in form
-    phone_number = models.CharField(max_length = 11)  #handle in form
+    post_code = models.CharField(max_length = 10, null=False) 
+    phone_number = models.CharField( max_length = 11)  
 
     def __str__(self):
         return f'info of {self.user}'
+
+
+class Slider(models.Model):
+    caption = models.CharField(max_length = 30)
+    pic = models.ImageField(upload_to = 'slider_pics')
+    state = models.CharField(max_length = 7)
+    data_slide_to = models.IntegerField()

@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block headers %}
+    <link rel="stylesheet" type="text/css" href="{% static 'products/css/style.css' %}">
+{% endblock headers %}
+
+
+{% block content %}
+
+  <div class="messages">
+  {% if messages %}
+    <ul >
+        {% for message in messages %}
+        <li>
+            <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+        </li>
+        {% endfor %}
+    </ul>
+  {% endif %}
+  </div>
+  <div class="cart table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          <th scope="col">تصویر</th>
+          <th scope="col">نام</th>
+          <th scope="col"></th>
+          <th scope="col">تعداد</th>
+          <th scope="col">قیمت</th>
+          <th scope="col">رنگ</th>
+          <th scope="col">قیمت کل</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in order_items %}
+           <tr>
+              <td  class="align-middle" >     
+                <form  action="{% url 'products:delete_order_item' item.id %}" method="POST">
+                    {% csrf_token %}
+                    <button class="btn text-danger" type="submit" ><span class="fa fa-trash" aria-hidden="true"></span></button>
+                </form>
+              </td>
+              <td class="align-middle">             
+                 <a href="{% url 'products:detail-product' item.product.id %}">
+                     <img src="{{item.product.pic.url}}" alt="">
+                 </a>
+              </td>
+             <td class="align-middle">{{item.product.product_name}}</td>
+             <td class="handle_quantity align-middle"> 
+                <div data-item="{{item.id}}" data-action="add" class="update-cart"> <div class="btn btn-outline-danger btn-sm"> <i class="fa fa-angle-up" aria-hidden="true"></i></div> </div>
+                <div data-item="{{item.id}}" data-action="remove" class="update-cart"> <div class="btn btn-outline-danger btn-sm"><i class="fa fa-angle-down" aria-hidden="true"></i></div></div>      
+             </td>
+             <td class="align-middle">{{item.qunatity}}</td>
+             {% if item.product.discount %}
+                <td class="align-middle" style="color: rgb(246, 20, 20);"><span style="font-weight: bold;">{{item.product.get_discount|intcomma}}</span> ریال</td>
+             {% else %}
+                <td class="align-middle" style="color: rgb(246, 20, 20);"><span style="font-weight: bold;">{{item.product.price|intcomma}}</span> ریال</td>
+             {% endif %}
+             <td class="align-middle">{{item.color}}</td>
+             <td class="align-middle" style="color: rgb(246, 20, 20);"><span style="font-weight: bold;">{{item.get_total_price|intcomma}}</span> ریال</td>
+           </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+    {% if order_items %}
+      <div class="delivery row">
+        <div class="col"></div>
+
+        <div>
+          <form action="{% url 'products:select-delivery'%}"  method="POST">
+            {% csrf_token %}
+            <h6 style="font-weight: bold;text-align: center;">نحوه ارسال را انتخاب کنید:</h6>
+            <hr>
+            <select name='select_delivery_type' onchange='if(this.value != 0) { this.form.submit(); }'>
+              <option value='0'>{% if order.delivery %}{{order.delivery}}{% endif %}</option>
+              {% for delivery in deliveries%}
+                 <option value='{{delivery.id}}'>{{delivery.type}}</option>
+              {% endfor %}
+            </select>
+          </form>
+          {% if order.delivery %}
+            <div class="choose_delivery">
+              <div style="color: brown;"><span >هزینه ارسال : </span><b>{{order.get_delivery_price|intcomma}}</b> ریال</div>
+              <div style="color: brown;"><span >هزینه کل : </span><b>{{order.total_price|intcomma}}</b> ریال</div>
+            </div>
+          {% endif %}
+        </div>
+        
+        <div class="col"></div>
+      </div>
+        
+      <div class="button_wrapper">
+          <a  href ="{% url 'products:confirm-order'%}" class="btn btn-danger">تایید و ادامه  </a>
+      </div> 
+      
+    {% endif %}
+  
+{% endblock content %}
+
+
+{% block script %}
+  <script src="{% static 'products/js/jq.js' %}"></script>
+{% endblock %}
