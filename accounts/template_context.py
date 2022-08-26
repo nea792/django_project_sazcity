@@ -24,3 +24,10 @@ def order_count(request):
             order_items_count = unrecorded_order[0].get_total_quantity()
             context = {'order_items_count':order_items_count}
     return context
+
+def get_user_rate(request):
+    if request.user.is_authenticated: 
+        return {'user_rate': request.user.rate}  
+    return {}
+
+

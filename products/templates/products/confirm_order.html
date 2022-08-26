@@ -53,11 +53,14 @@
                 </div>
 
                 <div>
-                    <span>تعداد کل :</span> {{order.get_total_quantity}}
+                    <span> تعداد کل کالاها :</span> {{order.get_total_quantity}}
                 </div>
 
                 <div>
-                    <span> حمل و نقل  :</span> {{order.delivery.type}}
+                    <span> روش حمل و نقل :</span> {{order.delivery.type}}
+                </div>
+                <div>
+                    <span style="color: red;"> {{order.delivery.get_total_days}} </span> 
                 </div>
                 <hr>
                 <div>

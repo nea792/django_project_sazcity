@@ -5,13 +5,17 @@ from wsgiref.simple_server import demo_app
 from django.db import models
 from accounts.models import Custom_user
 from django.core.validators import MaxValueValidator, MinValueValidator
-
+from django.core.exceptions import ObjectDoesNotExist
 
 class Category(models.Model):
     category_name = models.CharField(max_length = 15)
 
     def __str__(self):
         return self.category_name
+    
+    class Meta:
+        verbose_name_plural = "دسته های کلی"
+
 
 
 class Category_item(models.Model):
@@ -20,6 +24,9 @@ class Category_item(models.Model):
 
     def __str__(self):
         return self.inner_category_name
+
+    class Meta:
+        verbose_name_plural = "زیر دسته ها"
 
 
 class Product(models.Model):
@@ -32,6 +39,9 @@ class Product(models.Model):
     
     def __str__(self):
         return self.product_name
+
+    class Meta:
+        verbose_name_plural = "محصولات"
 
     def total_number(self):
         color_values = self.color_value_set.all()
@@ -46,7 +56,7 @@ class Product(models.Model):
             result = "موجود نیست"
         return result
 
-    def get_discount(self):
+    def get_discount(self):#calculate price with discount
        final_price = self.price * (100 - self.discount.percent)/100
        return final_price
 
@@ -58,8 +68,7 @@ class Product(models.Model):
             for comment in comments:
                 sum_rates += comment.rate
             avg_rates = round(sum_rates/length_of_comments, 1)
-            return avg_rates
-            
+            return avg_rates       
         except:
             return 0
 
@@ -76,6 +85,8 @@ class Comment(models.Model):
     
     def __str__(self):
         return f'{self.id} from {self.user}'
+    class Meta:
+        verbose_name_plural = "نظرات"
 
 
 class Discount(models.Model):
@@ -85,12 +96,18 @@ class Discount(models.Model):
     def __str__(self):
         return f'discount :{self.percent}% for {self.product}'
 
+    class Meta:
+        verbose_name_plural = "تخفیف ها"
+
 
 class Attributes(models.Model):
     att_name = models.CharField(max_length=25)
 
     def __str__(self):
         return f'{self.att_name}'
+
+    class Meta:
+        verbose_name_plural = "مشخصات"
 
 
 class Attributes_value(models.Model):
@@ -100,8 +117,11 @@ class Attributes_value(models.Model):
 
     def __str__(self):
         return f'{self.att} for {self.product}'
-        
 
+    class Meta:
+        verbose_name_plural = "مقدار مشخصات"
+
+        
 class Liked_product(models.Model):
     product = models.ForeignKey(Product, on_delete = models.CASCADE)
     user = models.ForeignKey(Custom_user, on_delete = models.CASCADE)
@@ -110,12 +130,18 @@ class Liked_product(models.Model):
     def __str__(self):
         return f'{self.user} for {self.product}'
 
+    class Meta:
+        verbose_name_plural = "لایک شده ها"
+
     
 class Color(models.Model):
     color_name = models.CharField(max_length = 25)
 
     def __str__(self):
         return self.color_name
+
+    class Meta:
+        verbose_name_plural = "رنگ ها"
 
 
 class Color_value(models.Model):
@@ -126,13 +152,23 @@ class Color_value(models.Model):
     def __str__(self):
         return f'{self.color} for {self.product}'
 
+    class Meta:
+        verbose_name_plural = "مقدار رنگ ها"
+
 
 class Delivery(models.Model):
     type = models.CharField(max_length=25)
     price = models.DecimalField(max_digits = 9, decimal_places = 0)
+    days = models.CharField(max_length=4, default='2')
 
     def __str__(self):
         return f'{self.type}'
+    
+    def get_total_days(self):
+        return f'سفارش شما تا {self.days} روز کاری ارسال خواهد شد'
+
+    class Meta:
+        verbose_name_plural = "نحوه های ارسال"
 
 
 class Order(models.Model):
@@ -142,6 +178,9 @@ class Order(models.Model):
     date_ordered =  models.DateTimeField(auto_now = True)
     confirm = models.BooleanField (default = False)
     
+    class Meta:
+        verbose_name_plural = "سبد های خرید"
+
     def __str__(self):
         return f'id : {self.id}'
     
@@ -165,7 +204,33 @@ class Order(models.Model):
         return product_price + self.get_delivery_price()
 
     def get_delivery_price(self):
+        if self.is_free_delivery():
+            return 0
+        else:
             return self.delivery.price * self.get_total_weight()
+
+    def is_free_delivery(self):
+        user_rate = self.user.rate
+        if user_rate > 500 :
+            return True
+        return False
+    
+    def calculate_userRate(self):
+        if self.complete==True:
+            self.decrease_userRate()
+            self.increase_userRate()
+        
+    def decrease_userRate(self):
+        if self.is_free_delivery():
+           self.user.rate -=500
+           self.user.save()
+
+    def increase_userRate(self):
+        price =self.total_product_price()
+        rate = round(price/200000)
+        #print(price,rate)
+        self.user.rate += rate
+        self.user.save()
 
     def get_total_weight(self):
         return sum([item.get_weight() for item in self.order_items_set.all()])
@@ -187,11 +252,14 @@ class Order_items(models.Model):
     qunatity = models.IntegerField(default = 1)
     color = models.ForeignKey(Color, on_delete = models.CASCADE, null=True)
 
+    class Meta:
+        verbose_name_plural = "آیتم های سبد خرید"
+
     def __str__(self):
         return f'id : {self.id}'
 
     def get_total_price(self):
-        if Discount.objects.values('product').filter(product = self.product):
+        if hasattr(self.product,'discount'):
              return self.qunatity * self.product.get_discount()
         else:
              return self.qunatity * self.product.price

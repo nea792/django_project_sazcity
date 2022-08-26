@@ -262,6 +262,7 @@ def confirm_order(request):
                 order.complete = True
                 order.save()
                 order.update_quantity()
+                order.calculate_userRate()
                 return render(request,'products/showResultOfOrder.html', {'order':order})
             else:
                 messages.warning(request, 'اطلاعات وارد شده نامعتبر است!')

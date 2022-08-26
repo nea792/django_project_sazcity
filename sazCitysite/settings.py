@@ -62,6 +62,7 @@ TEMPLATES = [
                 'accounts.template_context.show_navbar',
                 'accounts.template_context.show_slider',
                 'accounts.template_context.order_count',
+                'accounts.template_context.get_user_rate',
             ],
         },
     },

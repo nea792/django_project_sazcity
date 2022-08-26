@@ -72,6 +72,9 @@
         <div class="col"></div>
 
         <div>
+          {% if order.is_free_delivery %}
+             <h6 style="color:red">«به دلیل داشتن امتیاز بالای 500 هزینه ارسال برای شما رایگان در نظر گرفته می شود»</h6>
+          {% endif %}
           <form action="{% url 'products:select-delivery'%}"  method="POST">
             {% csrf_token %}
             <h6 style="font-weight: bold;text-align: center;">نحوه ارسال را انتخاب کنید:</h6>
